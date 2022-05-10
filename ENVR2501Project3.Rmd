@@ -1,0 +1,491 @@
+---
+title: "Project 3"
+author: "Luke Abbatessa, Jacob Alltucker, Lillian Ein"
+
+output: html_document
+---
+
+Instructions
+------------
+
+Please follow the instructions below to complete your assignment:
+
+1. Open the R markdown template **biostatistics-projTemplate.Rmd** in RStudio
+2. Insert the relevant information (i.e., assignment number, student name)
+3. Save the file as **projNUMBER-yourLastName.Rmd** replacing **NUMBER** with the assignment \#
+4. Your answers should consist of the R code used to generate the results and their interpretation
+5. Do not use any special symbols such as \%, \#, \$, and \& in your answers
+6. Generate an HTML version of the Markdown document by clicking on the **Knit** icon in RStudio
+7. Submit your RMD project file via the Turnitin link in the Assignment section of Blackboard and email
+    a copy of your RMD and HTML project files to your TA
+
+Problem 1
+---------
+
+```{r}
+benguela <- read.csv("http://faraway.neu.edu/biostats/assn3_benguela.csv")
+california <- read.csv("http://faraway.neu.edu/biostats/assn3_california.csv")
+canary <- read.csv("http://faraway.neu.edu/biostats/assn3_canary.csv")
+humboldt <- read.csv("http://faraway.neu.edu/biostats/assn3_humboldt.csv")
+```
+
+### Question 1
+
+```{r}
+benguela$period <- ifelse(benguela$year >= 1950 & benguela$year <= 2024, "before", "after")
+benguela$period <- ifelse(benguela$year >= 2025 & benguela$year <= 2099, "after", benguela$period)
+benguela
+
+california$period <- ifelse(california$year >= 1950 & california$year <= 2024, "before", "after")
+california$period <- ifelse(california$year >= 2025 & california$year <= 2099, "after", california$period)
+california
+
+canary$period <- ifelse(canary$year >= 1950 & canary$year <= 2024, "before", "after")
+canary$period <- ifelse(canary$year >= 2025 & canary$year <= 2099, "after", canary$period)
+canary
+
+humboldt$period <- ifelse(humboldt$year >= 1950 & humboldt$year <= 2024, "before", "after")
+humboldt$period <- ifelse(humboldt$year >= 2025 & humboldt$year <= 2099, "after", humboldt$period)
+humboldt
+```
+
+### Question 2
+
+```{r}
+benguela.df <- data.frame("year" = benguela$year, "period" = benguela$period, "multimodel_mean" = rowMeans(benguela[, 1:22]))
+benguela.df
+
+california.df <- data.frame("year" = california$year, "period" = california$period, "multimodel_mean" = rowMeans(california[, 1:22]))
+california.df
+
+canary.df <- data.frame("year" = canary$year, "period" = canary$period, "multimodel_mean" = rowMeans(canary[, 1:22]))
+canary.df
+
+humboldt.df <- data.frame("year" = humboldt$year, "period" = humboldt$period, "multimodel_mean" = rowMeans(humboldt[, 1:22]))
+humboldt.df
+```
+
+### Question 3
+
+The appropriate diagnostic test I have chosen to use to check for normality among the distributions of data across the different periods and EBCS is the Shapiro-Wilk test. 
+
+Test 1 H0: The data representative of the mulimodel means for the before period for Benguela come from a normal distribution.
+Test 1 Ha: The data representative of the multimodel means for the before period for Benguela do not come from a normal distribution.
+
+Test 2 H0: The data representative of the mulimodel means for the after period for Benguela come from a normal distribution.
+Test 2 Ha: The data representative of the multimodel means for the after period for Benguela do not come from a normal distribution.
+
+Test 3 H0: The data representative of the mulimodel means for Benguela irrespective of period come from a normal distribution.
+Test 3 Ha: The data representative of the multimodel means for Benguela irrespective of period do not come from a normal distribution.
+
+Test 4 H0: The data representative of the mulimodel means for the before period for California come from a normal distribution.
+Test 4 Ha: The data representative of the multimodel means for the before period for California do not come from a normal distribution.
+
+Test 5 H0: The data representative of the mulimodel means for the after period for California come from a normal distribution.
+Test 5 Ha: The data representative of the multimodel means for the after period for California do not come from a normal distribution.
+
+Test 6 H0: The data representative of the mulimodel means for California irrespective of period come from a normal distribution.
+Test 6 Ha: The data representative of the multimodel means for California irrespective of period do not come from a normal distribution.
+
+Test 7 H0: The data representative of the mulimodel means for the before period for Canary come from a normal distribution.
+Test 7 Ha: The data representative of the multimodel means for the before period for Canary do not come from a normal distribution.
+
+Test 8 H0: The data representative of the mulimodel means for the after period for Canary come from a normal distribution.
+Test 8 Ha: The data representative of the multimodel means for the after period for Canary do not come from a normal distribution.
+
+Test 9 H0: The data representative of the mulimodel means for Canary irrespective of period come from a normal distribution.
+Test 9 Ha: The data representative of the multimodel means for Canary irrespective of period do not come from a normal distribution.
+
+Test 10 H0: The data representative of the mulimodel means for the before period for Humboldt come from a normal distribution.
+Test 10 Ha: The data representative of the multimodel means for the before period for Humboldt do not come from a normal distribution.
+
+Test 11 H0: The data representative of the mulimodel means for the after period for Humboldt come from a normal distribution.
+Test 11 Ha: The data representative of the multimodel means for the after period for Humboldt do not come from a normal distribution.
+
+Test 12 H0: The data representative of the mulimodel means for Humboldt irrespective of period come from a normal distribution.
+Test 12 Ha: The data representative of the multimodel means for Humboldt irrespective of period do not come from a normal distribution.
+```{r}
+benguela.df.period.before <- subset(benguela.df, subset = period == "before")
+benguela.df.period.after <- subset(benguela.df, subset = period == "after")
+
+shapiro.test(benguela.df.period.before$multimodel_mean) # Test 1
+
+shapiro.test(benguela.df.period.after$multimodel_mean) # Test 2
+
+shapiro.test(benguela.df$multimodel_mean) # Test 3
+
+
+california.df.period.before <- subset(california.df, subset = period == "before")
+california.df.period.after <- subset(california.df, subset = period == "after")
+
+shapiro.test(california.df.period.before$multimodel_mean) # Test 4
+
+shapiro.test(california.df.period.after$multimodel_mean) # Test 5
+
+shapiro.test(california.df$multimodel_mean) # Test 6
+
+
+canary.df.period.before <- subset(canary.df, subset = period == "before")
+canary.df.period.after <- subset(canary.df, subset = period == "after")
+
+shapiro.test(canary.df.period.before$multimodel_mean) # Test 7
+
+shapiro.test(canary.df.period.after$multimodel_mean) # Test 8 
+
+shapiro.test(canary.df$multimodel_mean) # Test 9
+
+
+humboldt.df.period.before <- subset(humboldt.df, subset = period == "before")
+humboldt.df.period.after <- subset(humboldt.df, subset = period == "after")
+
+shapiro.test(humboldt.df.period.before$multimodel_mean) # Test 10
+
+shapiro.test(humboldt.df.period.after$multimodel_mean) # Test 11
+
+shapiro.test(humboldt.df$multimodel_mean) # Test 12
+```
+Test 1: Since the p-value (0.4028) is greater than alpha = 0.05, we fail to reject the null hypothesis and say that the data representative of the mulimodel means for the before period for Benguela come from a normal distribution.
+
+Test 2: Since the p-value (0.8204) is greater than alpha = 0.05, we fail to reject the null hypothesis and say that the data representative of the mulimodel means for the after period for Benguela come from a normal distribution.
+
+Test 3: Since the p-value (0.04288) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the multimodel means for Benguela irrespective of period do not come from a normal distribution.
+
+Test 4: Since the p-value (0.7929) is greater than alpha = 0.05, we fail to reject the null hypothesis and say that the data representative of the mulimodel means for the before period for California come from a normal distribution.
+
+Test 5: Since the p-value (0.1737) is greater than alpha = 0.05, we fail to reject the null hypothesis and say that the data representative of the mulimodel means for the after period for California come from a normal distribution.
+
+Test 6: Since the p-value (0.7527) is greater than alpha = 0.05, we fail to reject the null hypothesis and say that the data representative of the mulimodel means for California irrespective of period come from a normal distribution.
+
+Test 7: Since the p-value (0.5817) is greater than alpha = 0.05, we fail to reject the null hypothesis and say that the data representative of the mulimodel means for the before period for Canary come from a normal distribution.
+
+Test 8: Since the p-value (0.02496) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the multimodel means for the after period for Canary do not come from a normal distribution.
+
+Test 9: Since the p-value (9.646e-05) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the multimodel means for Canary irrespective of period do not come from a normal distribution.
+
+Test 10: Since the p-value (0.6858) is greater than alpha = 0.05, we fail to reject the null hypothesis and say that the data representative of the mulimodel means for the before period for Humboldt come from a normal distribution.
+
+Test 11: Since the p-value (0.02489) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the multimodel means for the after period for Humboldt do not come from a normal distribution.
+
+Test 12: Since the p-value (0.01559) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the multimodel means for Humboldt irrespective of period do not come from a normal distribution. 
+
+Looking at the results of the Shapiro-Wilk test representative of the EBSC Benguela irrespective of period (Test 3) alone,the p-value (0.04288) is less than 0.05; as a result, we reject the null hypothesis for that test and say that the data representative of the multimodel means for Benguela irrespective of period do not come from a normal distribution. Thus, non-parametric tests are warranted. 
+
+The major potential consequence of using a non-parametric test instead of a parametric test is a loss of power. This may result in a high type II error as a result, which is another potential consequence. 
+
+### Question 4
+
+To compare the multimodel mean across periods for each EBCS, I will conduct four Mann Whitney U tests (one per EBCS).
+
+Test 1 H0: The median multimodel mean for the before period for Benguela is equal to the median multimodel mean for the after period for Benguela.
+Test 1 Ha: The median multimodel mean for the before period for Benguela is not equal to the median multimodel mean for the after period for Benguela.
+
+Test 2 H0: The median multimodel mean for the before period for California is equal to the median multimodel mean for the after period for California.
+Test 2 Ha: The median multimodel mean for the before period for California is not equal to the median multimodel mean for the after period for California.
+
+Test 3 H0: The median multimodel mean for the before period for Canary is equal to the median multimodel mean for the after period for Canary.
+Test 3 Ha: The median multimodel mean for the before period for Canary is not equal to the median multimodel mean for the after period for Canary.
+
+Test 4 H0: The median multimodel mean for the before period for Humboldt is equal to the median multimodel mean for the after period for Humboldt.
+Test 4 Ha: The median multimodel mean for the before period for Humboldt is not equal to the median multimodel mean for the after period for Humboldt.
+```{r}
+before.benguela <- as.matrix(subset(benguela.df, period == "before", select = "multimodel_mean"))
+after.benguela <- as.matrix(subset(benguela.df, period == "after", select = "multimodel_mean"))
+wilcox.test(before.benguela, after.benguela) # Test 1
+
+before.california <- as.matrix(subset(california.df, period == "before", select = "multimodel_mean"))
+after.california <- as.matrix(subset(california.df, period == "after", select = "multimodel_mean"))
+wilcox.test(before.california, after.california) # Test 2
+
+before.canary <- as.matrix(subset(canary.df, period == "before", select = "multimodel_mean"))
+after.canary <- as.matrix(subset(canary.df, period == "after", select = "multimodel_mean"))
+wilcox.test(before.canary, after.canary) # Test 3
+
+before.humboldt <- as.matrix(subset(humboldt.df, period == "before", select = "multimodel_mean"))
+after.humboldt <- as.matrix(subset(humboldt.df, period == "after", select = "multimodel_mean"))
+wilcox.test(before.humboldt, after.humboldt) # Test 4
+```
+Test 1: Since the p-value (2.2e-16) is less than alpha = 0.05, we can reject the null hypothesis and say that the median multimodel mean for the before period for Benguela is not equal to the median multimodel mean for the after period for Benguela. Therefore, the multimodel mean does differ between periods for Benguela.
+
+Test 2: Since the p-value (4.841e-05) is less than alpha = 0.05, we can reject the null hypothesis and say that the median multimodel mean for the before period for California is not equal to the median multimodel mean for the after period for California. Therefore, the multimodel mean does differ between periods for California.
+
+Test 3: Since the p-value (2.2e-16) is less than alpha = 0.05, we can reject the null hypothesis and say that the median multimodel mean for the before period for Canary is not equal to the median multimodel mean for the after period for Canary. Therefore, the multimodel mean does differ between periods for Canary.
+
+Test 4: Since the p-value (2.2e-16) is less than alpha = 0.05, we can reject the null hypothesis and say that the median multimodel mean for the before period for Humboldt is not equal to the median multimodel mean for the after period for Humboldt. Therefore, the multimodel mean does differ between periods for Humboldt. 
+
+### Question 5
+
+```{r}
+benguela.averages.aggregate <- aggregate(multimodel_mean ~ period, FUN = mean, data = benguela.df)
+se <- function(x) {sd(x)/sqrt(length(x))}
+benguela.ses.aggregate <- aggregate(multimodel_mean ~ period, FUN = se, data = benguela.df)
+
+california.averages.aggregate <- aggregate(multimodel_mean ~ period, FUN = mean, data = california.df)
+california.ses.aggregate <- aggregate(multimodel_mean ~ period, FUN = se, data = california.df)
+
+canary.averages.aggregate <- aggregate(multimodel_mean ~ period, FUN = mean, data = canary.df)
+canary.ses.aggregate <- aggregate(multimodel_mean ~ period, FUN = se, data = canary.df)
+
+humboldt.averages.aggregate <- aggregate(multimodel_mean ~ period, FUN = mean, data = humboldt.df)
+humboldt.ses.aggregate <- aggregate(multimodel_mean ~ period, FUN = se, data = humboldt.df)
+
+df.benguela.california <- merge(benguela.averages.aggregate, california.averages.aggregate, by = "period")
+df.benguela.california.canary <- merge(df.benguela.california, canary.averages.aggregate, by = "period")
+df.all.ebcss <- merge(df.benguela.california.canary, humboldt.averages.aggregate, by = "period")
+colnames(df.all.ebcss) <- c("period", "benguela", "california", "canary", "humboldt")
+
+benguela.before.avg.multimodel.mean <- mean(benguela.df.period.before$multimodel_mean)
+benguela.after.avg.multimodel.mean <- mean(benguela.df.period.after$multimodel_mean)
+california.before.avg.multimodel.mean <- mean(california.df.period.before$multimodel_mean)
+california.after.avg.multimodel.mean <- mean(california.df.period.after$multimodel_mean)
+canary.before.avg.multimodel.mean <- mean(canary.df.period.before$multimodel_mean)
+canary.after.avg.multimodel.mean <- mean(canary.df.period.after$multimodel_mean)
+humboldt.before.avg.multimodel.mean <- mean(humboldt.df.period.before$multimodel_mean)
+humboldt.after.avg.multimodel.mean <- mean(humboldt.df.period.after$multimodel_mean)
+
+avgs.vector <- c(benguela.after.avg.multimodel.mean, benguela.before.avg.multimodel.mean, california.after.avg.multimodel.mean, california.before.avg.multimodel.mean, canary.after.avg.multimodel.mean, canary.before.avg.multimodel.mean, humboldt.after.avg.multimodel.mean, humboldt.before.avg.multimodel.mean)
+
+benguela.before.se.multimodel.mean <- se(benguela.df.period.before$multimodel_mean)
+benguela.after.se.multimodel.mean <- se(benguela.df.period.after$multimodel_mean)
+california.before.se.multimodel.mean <- se(california.df.period.before$multimodel_mean)
+california.after.se.multimodel.mean <- se(california.df.period.after$multimodel_mean)
+canary.before.se.multimodel.mean <- se(canary.df.period.before$multimodel_mean)
+canary.after.se.multimodel.mean <- se(canary.df.period.after$multimodel_mean)
+humboldt.before.se.multimodel.mean <- se(humboldt.df.period.before$multimodel_mean)
+humboldt.after.se.multimodel.mean <- se(humboldt.df.period.after$multimodel_mean)
+
+ses.vector <- c(benguela.after.se.multimodel.mean, benguela.before.se.multimodel.mean, california.after.se.multimodel.mean, california.before.se.multimodel.mean, canary.after.se.multimodel.mean, canary.before.se.multimodel.mean, humboldt.after.se.multimodel.mean, humboldt.before.se.multimodel.mean)
+
+bp <- barplot(as.matrix(df.all.ebcss[, 2:5]), beside = TRUE, ylab = "Average Multimodel Upwelling Mean (m^2/s)", xlab = "Eastern Boundary Current System (EBCS)", main = "Average Multimodel Upwelling Mean in m^2/s Per Period for Each EBCS", ylim = c(0, 1), names = c("Benguela", "California", "Canary", "Humboldt"), col = c("blue", "red"))
+arrows(x0 = bp, x1 = bp, y0 = avgs.vector - ses.vector, y1 = avgs.vector + ses.vector, angle = 90, length = 0.1, code = 3)
+legend("topright", legend = c("after", "before"), fill = c("blue", "red"))
+bp
+```
+
+### Question 6
+
+In Benguela, given that the results of the Mann Whitney U test proved that the multimodel mean differs between periods, and given that the group bar chart shows that the average multimodel upwelling mean is projected to increase over time, it seems the multimodel mean upwelling will increase as time progresses.
+
+In California, given that the results of the Mann Whitney U test proved that the multimodel mean differs between periods, and given that the group bar chart shows that the average multimodel upwelling mean is projected to increase over time (even if only by a slight margin), it seems the multimodel mean upwelling will increase as time progresses.
+
+In Canary, given that the results of the Mann Whitney U test proved that the multimodel mean differs between periods, and given that the group bar chart shows that the average multimodel upwelling mean is projected to increase over time, it seems the multimodel mean upwelling will increase as time progresses.
+
+In Humboldt, given that the results of the Mann Whitney U test proved that the multimodel mean differs between periods, and given that the group bar chart shows that the average multimodel upwelling mean is projected to increase over time, it seems the multimodel mean upwelling will increase as time progresses.
+
+Overall, there is a collective trend across EBCS, whereby the multimodel mean upwelling looks to increase over time.
+
+Problem 2
+---------
+### Question 1
+
+Two potential tests that could test if group variances differ between the EBCSs are the F-test and the Levene test. The F-test assumes the samples are normally distributed and random and the Levene test assmues samples are approximately normally distributed and random.
+
+### Question 2
+
+The Levene test is a more robust test than the F-test, and has more power when groups are only approximately normally distributed. The canary and humboldt areas are not normally distributed so the Levene test would be appropriate here. Additionally, the F-test can only be used on two groups, but the Leneve test can test the variance between many groups.
+
+Null Hypothesis: Group variances between each EBCS are equal to each other.
+Alternate: Group variances of each EBCS are not equal to each other.
+```{r}
+library(car)
+
+leveneTest(benguela.df$multimodel_mean ~ benguela.df$period) # Test 1
+
+leveneTest(california.df$multimodel_mean ~ california.df$period) # Test 2
+
+leveneTest(canary.df$multimodel_mean ~ canary.df$period) # Test 3
+
+leveneTest(humboldt.df$multimodel_mean ~ humboldt.df$period) # Test 4
+```
+Test 1: The p-value is 0.468 and greater than 0.05 so we fail to reject the null hypothesis that variances are equal to each other.
+
+Test 2: The p-value is 0.01802 and smaller than 0.05, so we can reject the null hypothesis and conclude that the group variances differ.
+
+Test 3: The p-value is 0.01116 and smaller than 0.05, so we can reject the null and conclude that the group variances differ.
+
+Test 4: The p-value is 0.02179 and smaller than 0.05, so we can reject the null and conclude that the group variances differ.
+
+### Question 3
+
+```{r}
+ben.b4var <- var(benguela.df$multimodel_mean[1:75])
+ben.after.var <- var(benguela.df$multimodel_mean[76:150])
+cali.b4var <- var(california.df$multimodel_mean[1:75])
+cali.after.var <- var(california.df$multimodel_mean[76:150])
+canary.b4var <- var(canary.df$multimodel_mean[1:75])
+canary.after.var <- var(canary.df$multimodel_mean[76:150])
+humbo.b4var <- var(humboldt.df$multimodel_mean[1:75])
+humbo.after.var <- var(humboldt.df$multimodel_mean[76:150])
+
+var <- c(ben.b4var, ben.after.var, cali.b4var, cali.after.var, canary.b4var, canary.after.var, humbo.b4var, humbo.after.var)
+
+var.matrix <- matrix(var, ncol=2, byrow=TRUE)
+
+upwelling.var.bp <- barplot((cbind(var.matrix[1,], var.matrix[2,], var.matrix[3,], var.matrix[4,])), beside = TRUE, names.arg = c("Benguela", "California", "Canary", "Humboldt"), ylab = "Multimodel Upwelling Variance", xlab = "Eastern Boundary Current System", col = c("pink", "purple"), ylim = c(0, .003), main = "Variance Differences")
+legend(x = "top", legend = c("Before", "After"), fill = c("pink", "purple"))
+```
+
+### Question 4
+
+In both the Benguela and California EBCS, the multimodal variance went down slightly over time. Meanwhile, in both the Canary and Humboldt EBCS, the multimodal variance greatly increased over time.
+The differences in multimodal variances and multimodal means vary between EBCS. In the Canary and Humboldt regions, both their means and variances increased over time, giving a good indication of robustness. In the Benguela and California EBCS, their results were not as consistent, as they both saw an increased mean and a decreased variance suggesting the tests for these areas were not as robust.
+
+Problem 3
+
+```{r}
+benguela <- read.csv("http://faraway.neu.edu/biostats/assn3_benguela.csv")
+california <- read.csv("http://faraway.neu.edu/biostats/assn3_california.csv")
+canary <- read.csv("http://faraway.neu.edu/biostats/assn3_canary.csv")
+humboldt <- read.csv("http://faraway.neu.edu/biostats/assn3_humboldt.csv")
+```
+
+---------
+### Question 1
+
+The data frames provided give upwelling across multiple models for a list of years. Thus, we can average the models together to get a mean upwelling for each year. Using this we can conduct a linear regression to determine if upwelling changes over time. Testing against the null hypothesis of slope = 0 (or no change over time), the alternate hypothesis would be a slope that differs from 0 (meaning upwelling changes over time). 
+
+Ho: Slope equals 0, indicating no relationship between time and upwelling
+Ha: Slope does not equal 0, indicating a relationship between time and upwelling (meaning that upwelling changes over time)
+
+```{r}
+#reshape into long format, and rename columns
+#aggregate for means
+#QQplots, ACF plots, and residual plots to check assumptions
+beng.lng <- reshape(benguela, varying = list(1:22), idvar = "year", direction = "long")
+colnames(beng.lng) <- c("year", "model", "upwelling")
+ben.mean <- aggregate(upwelling ~ year, data = beng.lng, FUN = mean)
+cal.lng <- reshape(california, varying = list(1:22), idvar = "year", direction = "long")
+
+colnames(cal.lng) <- c("year", "model", "upwelling")
+cal.mean <- aggregate(upwelling ~ year, data = cal.lng, FUN = mean)
+can.lng <- reshape(canary, varying = list(1:22), idvar = "year", direction = "long")
+colnames(can.lng) <- c("year", "model", "upwelling")
+can.mean <- aggregate(upwelling ~ year, data = can.lng, FUN = mean)
+hum.lng <- reshape(humboldt, varying = list(1:22), idvar = "year", direction = "long")
+colnames(hum.lng) <- c("year", "model", "upwelling")
+hum.mean <- aggregate(upwelling ~ year, data = hum.lng, FUN = mean)
+```
+
+### Question 2
+
+The assumptions are as follows
+  1. Variables are linearly related
+  2. Residuals are normally distributed
+  3. Residuals are homoscedastic
+  4. Residuals are independent
+
+```{r}
+#Benguela
+ben.lm <- lm(upwelling ~ year, data = ben.mean)
+summary(ben.lm)
+ben.res <- resid(ben.lm)
+#qqplots
+hist(ben.lm$residuals)
+qqnorm(ben.lm$residuals)
+qqline(ben.lm$residuals)
+shapiro.test(ben.lm$residuals)
+#ACF plots
+acf(ben.lm$residuals, type = "correlation")
+acf(ben.res, type = "correlation")
+#fitted vs residuals
+plot(ben.lm, which = 1)
+plot(ben.lm, which = 3)
+```
+The p-value for the T-test comparing the regression slope to the null slope of 0 is p = 2e-16. As this is far small than our alpha of 0.05, we reject the null hypothesis, indicating that upwelling is changing over time and that the regression slope differs from 0.
+
+Assumptions: According to the shapiro test and QQ plots, the residuals are normal. The residual vs fitted yields a mostly straight line, indicating linearity between upwelling and year. The scale-location plot is mostly linear, but there appears to be a slight decrease in variance as the fitted values increase, although I do not think its major. Additionally, there may be some violation of independence between residuals, as some vertical lines are above the signifance lines in the ACF plot. However, it appeared fairly minor. Overall, the assumptions were largely met, although there were minor deviations. 
+```{r}
+#California
+cal.lm <- lm(upwelling ~ year, data = cal.mean)
+summary(cal.lm)
+hist(cal.lm$residuals)
+qqnorm(cal.lm$residuals)
+qqline(cal.lm$residuals)
+shapiro.test(cal.lm$residuals)
+acf(cal.lm$residuals, type = "correlation")
+plot(cal.lm, which = 1)
+plot(cal.lm, which = 3)
+```
+The p-value of 2.02e-5 is below our alpha of 0.05, so we reject Ho and conclude that the slope differs from 0. This indicates that upwelling changes over time in the California ESBC.  
+
+According to the shapiro test and Q-Q plot, residuals are normal. The Residual-Fitted graph shows some curve, although it appears to be overall pretty linear, enough that I would say that linearity is sufficiently met. Variance appears to decrease as fitted values increase, thus I would say that residuals are somewhat heteroscedastic, somewhat violating the assumption. ACF plotting shows independence between residuals. Most assumptions are met, but residuals appear to be somewhat heteroscedastic. Additionally, linearity is a little bit questionable but likely sufficient. 
+```{r}
+#Canary
+can.lm <- lm(upwelling ~ year, data = can.mean)
+summary(can.lm)
+hist(can.lm$residuals)
+qqnorm(can.lm$residuals)
+qqline(can.lm$residuals)
+shapiro.test(can.lm$residuals)
+acf(can.lm$residuals, type = "correlation")
+plot(can.lm, which = 1)
+plot(can.lm, which = 3)
+```
+A p-value of 2e-16 is less than the alpha of 0.05, meaning that we reject the null hypothesis, indicating that slope differs from 0. This means that upwelling changes over time (year) in the Canary EBCS.
+
+Assumptions: According to Q-Q plot and shapiro testing, residuals are normal. ACF plotting shows that residuals are independent. According to the residuals vs fitted graph, there is appears to be a slight lack of linearity, although not major. Similarly, the Scale-Location graph shows some slight heteroscedasticity with variance decreasing as fitted values increased, although not major. Overall, it mostly fits the assumptions, but linearity and heteroscedasticity may be questionable. 
+```{r}
+#Humbolt
+hum.lm <- lm(upwelling ~ year, data = hum.mean)
+summary(hum.lm)
+shapiro.test(hum.lm$residuals)
+#normality
+hist(hum.lm$residuals)
+qqnorm(hum.lm$residuals)
+qqline(hum.lm$residuals)
+#ACF
+acf(hum.lm$residuals, type = "correlation")
+#Fitted vs residuals
+plot(hum.lm, which = 1)
+plot(hum.lm, which = 3)
+```
+The p-value of 2e-16 is lower than the alpha of 0.05, meaning that we reject the null hypothesis and that slope differs from 0. This suggests that upwelling changes with time in the Humboldt EBCS. 
+
+Assumptions: All assumptions were met. Shapiro tests showed that residuals were normal and time and upwelling appear linearly related (Residuals vs fitted appeared mostly linear). ACF plots indicate that residuals are largely independent, and a flat scale location curve indicates homoscedasticity. 
+
+### Question 3
+
+```{r}
+#Plots
+prediction <- data.frame(year = seq(from = 1950, to = 2099, by = 1 ))
+cal.pred <- predict(cal.lm, newdata = prediction, interval = "conf")
+ben.pred <- predict(ben.lm, newdata = prediction, interval = "conf")
+can.pred <- predict(can.lm,newdata = prediction, interval = "conf")
+hum.pred <- predict(hum.lm, newdata = prediction, interval = "conf")
+
+#plot
+plot(cal.mean$year, cal.mean$upwelling, xlim = c(1950,2099), ylim = c(0, 2), xlab = "year", ylab = "upwelling (m^2/s)", main = "Upwelling Over Time", col = "red")
+points(ben.mean$year, ben.mean$upwelling, col = "blue")
+points(can.mean$year, can.mean$upwelling, col = "purple")
+points(hum.mean$year, hum.mean$upwelling, col = "green")
+lines(prediction$year, cal.pred[, "fit"], col = "red", lty = 1, lwd = 2)
+lines(prediction$year, ben.pred[, "fit"], col = "blue", lty = 1, lwd = 2)
+lines(prediction$year, can.pred[, "fit"], col = "purple", lty = 1, lwd = 2)
+lines(prediction$year, hum.pred[, "fit"], col = "green", lty = 1, lwd = 2)
+legend("topleft", legend = c("Benguela", "California", "Canary", "Humboldt"), col = c("blue", "red", "purple", "green"), pch = 1)
+#cal.pred <- data.frame(year = seq(from = 1950, to = 2099, by = 1 ))
+#can.pred <- data.frame(year = seq(from = 1950, to = 2099, by = 1 ))
+#hum.pred <- data.frame(year = seq(from = 1950, to = 2099, by = 1 ))
+```
+Based on the figure above, it appears that the upwelling in the Benguela EBCS is greater at all timepoints compared to the other three. Interestingly, upwelling appears to be similar between the California, Canary, and Humboldt EBCSs in 1950. Interestingly, by 2100, its predicted that Canary and Humboldt will have a larger increase in upwelling than California.
+
+### Question 4
+
+```{r}
+#Extract means and SD
+summary(ben.lm)
+summary(cal.lm)
+summary(can.lm)
+summary(hum.lm)
+slopes <- c(summary(ben.lm)$coefficients[2,1], summary(cal.lm)$coefficients[2,1], summary(can.lm)$coefficients[2,1], summary(hum.lm)$coefficients[2,1])
+SE <- c(summary(ben.lm)$coefficients[2,2], summary(cal.lm)$coefficients[2,2], summary(can.lm)$coefficients[2,2], summary(hum.lm)$coefficients[2,2])
+slopes
+Upper <- slopes + 1.96*SE
+Lower <- slopes - 1.96*SE
+bp.3 <- barplot(slopes, ylim = c(0, 0.002), names = c("Benguela", "California", "Canary", "Humboldt"), ylab = "Slope (m^2/s / year)", main = "Slopes of upwelling versus time across various EBCS", col = c("blue", "red", "purple", "green"))
+arrows(x0 = bp.3, x1 = bp.3, y0 = Lower, y1 = Upper, angle = 90, code = 3, length = 0.1)
+```
+Question 4.
+
+a. Based on the figure above, I would conclude that all slopes are significantly greater. The null hypothesis that there is no relationship between the variables is true compares, i.e. a slope of 0. The 95% confidence intervals do not overlap with 0 for any of the ESBCs. There appears to be a relationship between the upwelling and time in all of the ESBCs. This tracks with the calculated p-values of the regression, where t-testing between a constant slope of 0 and the regression slope of each ESBC indicated significant differences from an m = 0. 
+
+b. Additionally, I would say that it is clear that the difference in slope between California and the other EBCS's is statistically significant, as the 95% confidence intervals overlap for all but California's. Indeed, the slope of the Upwelling vs Time regression is significantly lower in the California ESBC than the others than the others.
