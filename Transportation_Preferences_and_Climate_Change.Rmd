@@ -1,0 +1,39 @@
+---
+title: "Lab7"
+author: "Alex"
+date: "11/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r histogram}
+hist(editeddata$Q4_1_percentage_climate_scientists)
+
+hist(editeddata$Q4_1_percentage_climate_scientists,
+  xlab = "percentage of climate scietists", 
+  ylab = "frequency",
+  main = "percentage of climate scientists that think human cause global warming is happening", 
+breaks = seq(0, 100, 5))
+```
+
+
+```{r exercise2}
+(table_Q3 <- table(editeddata$Q3_do_you_think_it_is))
+barplot(table_Q3)
+
+##(table_Q3 <- c(table_Q3, 0, 0))
+##names(table_Q3)[3:4] <- c("somewhat sure", "not at all sure")
+##barplot(table_Q3)
+
+table_Q3 <- table_Q3[c("Caused mostly by human activities", "Caused by human activities and natural changes", "Caused mostly by natural changes", "Neither, because it isn’t happening", "Other")]
+barplot(table_Q3)
+
+barplot(table_Q3,
+        ylab = "number of responses", 
+        xlab = "response",
+        ylim = c(0, 30))
+```
+
