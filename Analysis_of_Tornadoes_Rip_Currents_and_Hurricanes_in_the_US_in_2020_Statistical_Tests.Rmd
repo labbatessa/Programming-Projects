@@ -1,0 +1,291 @@
+---
+title: "Damage Rates - Details 2020/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("/Users/lukeabbatessa/Downloads/DATA CLUB Project Files")
+getwd()
+
+data.2020 <- read.csv("details2020df.csv", header = TRUE, sep = ",")
+data.2020
+
+data.2020.unedited <- read.csv("details2020dfunedited.csv", header = TRUE, sep = ",")
+data.2020.unedited
+
+data.2021 <- read.csv("details2021df.csv", header = TRUE, sep = ",")
+data.2021
+
+data.2021.unedited <- read.csv("details2021dfunedited.csv", header = TRUE, sep = ",")
+data.2021.unedited
+```
+
+```{r}
+df.2020 <- data.frame("event type" = data.2020$EVENT_TYPE, "property damage" = data.2020$DAMAGE_PROPERTY, "crop damage" = data.2020$DAMAGE_CROPS, "state" = data.2020.unedited$STATE, "episode narrative" = data.2020.unedited$EPISODE_NARRATIVE, "event narrative" = data.2020.unedited$EVENT_NARRATIVE)
+
+df.2021 <- data.frame("event type" = data.2021$EVENT_TYPE, "property damage" = data.2021$DAMAGE_PROPERTY, "crop damage" = data.2021$DAMAGE_CROPS, "state" = data.2021.unedited$STATE, "episode narrative" = data.2021.unedited$EPISODE_NARRATIVE, "event narrative" = data.2021.unedited$EVENT_NARRATIVE)
+```
+
+```{r}
+df.2020.events <- subset(df.2020, subset = event.type == c("Tornado", "Rip Current", "Hurricane"))
+
+df.2021.events <- subset(df.2021, subset = event.type == c("Tornado", "Rip Current", "Hurricane"))
+```
+
+```{r}
+df.2020.events.clean <- na.omit(df.2020.events)
+df.2020.events.clean$log.property.damage <- log10(df.2020.events.clean$property.damage)
+df.2020.events.clean$log.crop.damage <- log10(df.2020.events.clean$crop.damage)
+
+df.2021.events.clean <- na.omit(df.2021.events)
+df.2021.events.clean$log.property.damage <- log10(df.2021.events.clean$property.damage)
+df.2021.events.clean$log.crop.damage <- log10(df.2021.events.clean$crop.damage)
+```
+
+
+To check for normality among the distributions of data regarding both property damage and crop damage across the different event types and years, I will use multiple Shapiro-Wilk tests.
+
+Test 1 H0: The data representative of the property damage rates for tornadoes in 2020 come from a normal distribution.
+Test 1 Ha: The data representative of the property damage rates for tornadoes in 2020 do not come from a normal distribution.
+
+Test 2 H0: The data representative of the property damage rates for hurricanes in 2020 come from a normal distribution.
+Test 2 Ha: The data representative of the property damage rates for hurricanes in 2020 do not come from a normal distribution.
+
+Test 3 H0: The data representative of the property damage rates in 2020 irrespective of event type come from a normal distribution.
+Test 3 Ha: The data representative of the property damage rates in 2020 irrespective of event type do not come from a normal distribution.
+
+Test 4 H0: The data representative of the crop damage rates for tornadoes in 2020 come from a normal distribution.
+Test 4 Ha: The data representative of the crop damage rates for tornadoes in 2020 do not come from a normal distribution.
+
+Test 5 H0: The data representative of the crop damage rates for hurricanes in 2020 come from a normal distribution.
+Test 5 Ha: The data representative of the crop damage rates for hurricanes in 2020 do not come from a normal distribution.
+
+Test 6 H0: The data representative of the crop damage rates in 2020 irrespective of event type come from a normal distribution.
+Test 6 Ha: The data representative of the crop damage rates in 2020 irrespective of event type do not come from a normal distribution.
+
+Test 7 H0: The data representative of the property damage rates for tornadoes in 2021 come from a normal distribution.
+Test 7 Ha: The data representative of the property damage rates for tornadoes in 2021 do not come from a normal distribution.
+
+Test 8 H0: The data representative of the property damage rates in 2021 irrespective of event type come from a normal distribution.
+Test 8 Ha: The data representative of the property damage rates in 2021 irrespective of event type do not come from a normal distribution.
+
+Test 9 H0: The data representative of the crop damage rates for tornadoes in 2021 come from a normal distribution.
+Test 9 Ha: The data representative of the crop damage rates for tornadoes in 2021 do not come from a normal distribution.
+
+Test 10 H0: The data representative of the crop damage rates in 2021 irrespective of event type come from a normal distribution.
+Test 10 Ha: The data representative of the crop damage rates in 2021 irrespective of event type do not come from a normal distribution.
+
+Note: Shapiro-Wilk tests weren't conducted for either damage rate for rip currents for either year because no property damage nor crop damage was caused by this event in either 2020 or 2021. 
+
+Note: Shapiro-Wilk tests weren't conducted for either damage rate for hurricanes in 2021 because only one hurricane was recorded, and for a Shapiro-Wilk test to be conducted, the sample size must be at least 3.
+```{r}
+df.2020.tornado <- subset(df.2020.events.clean, subset = event.type == "Tornado")
+df.2020.ripcurrent <- subset(df.2020.events.clean, subset = event.type == "Rip Current")
+df.2020.hurricane <- subset(df.2020.events.clean, subset = event.type == "Hurricane")
+
+df.2021.tornado <- subset(df.2021.events.clean, subset = event.type == "Tornado")
+df.2021.ripcurrent <- subset(df.2021.events.clean, subset = event.type == "Rip Current")
+df.2021.hurricane <- subset(df.2021.events.clean, subset = event.type == "Hurricane")
+
+shapiro.test(df.2020.tornado$property.damage) # Test 1
+
+shapiro.test(df.2020.hurricane$property.damage) # Test 2
+
+shapiro.test(df.2020.events.clean$property.damage) # Test 3
+
+shapiro.test(df.2020.tornado$crop.damage) # Test 4
+
+shapiro.test(df.2020.hurricane$crop.damage) # Test 5
+
+shapiro.test(df.2020.events.clean$crop.damage) # Test 6
+
+shapiro.test(df.2021.tornado$property.damage) # Test 7
+
+shapiro.test(df.2021.events.clean$property.damage) # Test 8
+
+shapiro.test(df.2021.tornado$crop.damage) # Test 9
+
+shapiro.test(df.2021.events.clean$crop.damage) # Test 10
+```
+Test 1: Since the p-value (2.2e-16) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the property damage rates for tornadoes in 2020 do not come from a normal distribution.
+
+Test 2: Since the p-value (3.757e-05) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the property damage rates for hurricanes in 2020 do not come from a normal distribution.
+
+Test 3: Since the p-value (2.2e-16) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the property damage rates in 2020 irrespective of event type do not come from a normal distribution.
+
+Test 4: Since the p-value (2.2e-16) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the crop damage rates for tornadoes in 2020 do not come from a normal distribution.
+
+Test 5: Since the p-value (7.417e-10) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the crop damage rates for hurricanes in 2020 do not come from a normal distribution.
+
+Test 6: Since the p-value (2.2e-16) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the crop damage rates in 2020 irrespective of event type do not come from a normal distribution.
+
+Test 7: Since the p-value (2.2e-16) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the property damage rates for tornadoes in 2021 do not come from a normal distribution.
+
+Test 8: Since the p-value (2.2e-16) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the property damage rates in 2021 irrespective of event type do not come from a normal distribution.
+
+Test 9: Since the p-value (2.2e-16) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the crop damage rates for tornadoes in 2021 do not come from a normal distribution.
+
+Test 10: Since the p-value (2.2e-16) is less than alpha = 0.05, we reject the null hypothesis and say that the data representative of the crop damage rates in 2021 irrespective of event type do not come from a normal distribution.
+
+
+Additionally, I will use Quantile-Quantile (Q-Q plots) to test for normality; these will be for the associated damage rates, event types, and years that were not demonstrated by the Shapiro-Wilk tests.
+```{r}
+qqnorm(df.2020.ripcurrent$property.damage) # Plot 1 (Q-Q plot testing for normality for the distribution of data representative of property damage rates for rip currents in 2020)
+qqline(df.2020.ripcurrent$property.damage)
+
+qqnorm(df.2020.ripcurrent$crop.damage) # Plot 2 (Q-Q plot testing for normality for the distribution of data representative of crop damage rates for rip currents in 2020)
+qqline(df.2020.ripcurrent$crop.damage)
+
+qqnorm(df.2021.ripcurrent$property.damage) # Plot 3 (Q-Q plot testing for normality for the distribution of data representative of property damage rates for rip currents in 2021)
+qqline(df.2021.ripcurrent$property.damage)
+
+qqnorm(df.2021.hurricane$property.damage) # Plot 4 (Q-Q plot testing for normality for the distribution of data representative of property damage rates for hurricanes in 2021)
+qqline(df.2021.hurricane$property.damage)
+
+qqnorm(df.2021.ripcurrent$crop.damage) # Plot 5 (Q-Q plot testing for normality for the distribution of data representative of crop damage rates for rip currents in 2021)
+qqline(df.2021.ripcurrent$crop.damage)
+
+qqnorm(df.2021.hurricane$crop.damage) # Plot 6 (Q-Q plot testing for normality for the distribution of data representative of crop damage rates for hurricanes in 2021)
+qqline(df.2021.hurricane$crop.damage)
+```
+Technically, Plots 1-6 are (or at least appear to be) normally distributed.
+
+
+However, given the conclusions of Tests 3, 6, 8, and 10, non-parametric tests are warranted. Thus, to compare the mean damage rates for the events across locations per year, the Kruskal-Wallis test will be used.
+
+Note: For these tests, the damage rates within the Details files for 2020 and 2021 are considered the populations, and the damage rates representative of the subsets of all tornadoes, rip currents, and hurricanes that encompass these files (save the ones that had "NA" as either a property damage rate or crop damage rate --> these ones were omitted from our analyses) are considered the samples.
+
+Test 1 H0: All group median ranks regarding property damage across event types in 2020 are equal.
+Test 1 Ha: At least one pair of event types have different median ranks.
+
+Test 2 H0: All group median ranks regarding crop damage across event types in 2020 are equal.
+Test 2 Ha: At least one pair of event types have different median ranks.
+
+Test 3 H0: All group median ranks regarding property damage across event types in 2021 are equal.
+Test 3 Ha: At least one pair of event types have different median ranks.
+
+Test 4 H0: All group median ranks regarding crop damage across event types in 2021 are equal.
+Test 4 Ha: At least one pair of event types have different median ranks.
+```{r}
+kruskal.test(property.damage ~ event.type, data = df.2020.events.clean) # Test 1
+
+kruskal.test(crop.damage ~ event.type, data = df.2020.events.clean) # Test 2
+
+kruskal.test(property.damage ~ event.type, data = df.2021.events.clean) # Test 3
+
+kruskal.test(crop.damage ~ event.type, data = df.2021.events.clean) # Test 4
+```
+Test 1: Since the p-value (2.2e-16) is less than alpha = 0.05, we reject the null hypothesis and say that at least one pair of event types have different median ranks, with regards to property damage across event types in 2020. Thus, the average property damage rates for tornadoes, rip currents, and hurricanes in 2020 are not all equal to each other.
+
+Test 2: Since the p-value (0.2735) is greater than alpha = 0.05, we fail to reject the null hypothesis and say that all group median ranks regarding crop damage across event types in 2020 are equal. Thus, the average crop damage rates for tornadoes, rip currents, and hurricanes in 2020 are all equal to each other.
+
+Test 3: Since the p-value (1.779e-05) is less than alpha = 0.05, we reject the null hypothesis and say that at least one pair of event types have different median ranks, with regards to property damage across event types in 2021. Thus, the average property damage rates for tornadoes, rip currents, and hurricanes in 2021 are not all equal to each other. 
+
+Test 4: Since the p-value (1.864e-05) is less than alpha = 0.05, we reject the null hypothesis and say that at least one pair of event types have different median ranks, with regards to crop damage across event types in 2021. Thus, the average crop damage rates for tornadoes, rip currents, and hurricanes in 2021 are not all equal to each other.
+
+
+Given the results for Tests 1, 3, and 4, to test which average damage rates are different from each other, the Mann-Whitney U test will be used.
+
+Note: For these tests, the damage rates within the Details files for 2020 and 2021 are considered the populations, and the damage rates representative of the subsets of all tornadoes, rip currents, and hurricanes that encompass these files (save the ones that had "NA" as either a property damage rate or crop damage rate --> these ones were omitted from our analyses) are considered the samples.  
+
+Test 1 H0: median1 = median2, with regards to property damage across event types in 2020
+Test 1 Ha: median1 not= median2
+
+Test 2 H0: median1 = median2, with regards to property damage across event types in 2021
+Test 2 Ha: median1 not= median2
+
+Test 3 H0: median1 = median2, with regards to crop damage across event types in 2021
+Test 3 Ha: median1 not= median2
+```{r}
+pairwise.wilcox.test(df.2020.events.clean$property.damage, df.2020.events.clean$event.type, p.adjust.method = "holm") # Test 1
+
+pairwise.wilcox.test(df.2021.events.clean$property.damage, df.2021.events.clean$event.type, p.adjust.method = "holm") # Test 2
+
+pairwise.wilcox.test(df.2021.events.clean$crop.damage, df.2021.events.clean$event.type, p.adjust.method = "holm") # Test 3
+```
+Test 1: In each comparison (Tornado vs. Rip Current --> p-value = 9.8e-10; Tornado vs. Hurricane --> p-value = 9.8e-10; Rip Current vs. Hurricane --> p-value = 4.3-10), the p-value is less than alpha = 0.05, thus we reject the null hypothesis across all comparisons and say that median1 not= median2. In other words, all of the average damage rates with regards to property damage across event types in 2020 are different from each other.
+
+Test 2: In two of the comparisons (Tornado vs. Rip Current --> p-value = 3.6e-05; Rip Current vs. Hurricane --> p-value = 4.8e-06), the p-value is less than alpha = 0.05, thus we reject the null hypothesis for these comparisons and say that median1 not= median2. In other words, the average damage rates for tornadoes and rip currents, as well as those for rip currents and hurricanes, are different from each other, with regards to property damage across event types in 2021. However, in the remaining comparison (Tornado vs. Hurricane --> p-value = 0.063), the p-value is greater than alpha = 0.05, thus we fail to reject the null hypothesis for this comparison and say that median1 = median2. In other words, the average damage rates for tornadoes and hurricanes are equal to each other, with regards to property damage across event types in 2021.
+
+Test 3: In two of the comparisons (Tornado vs. Hurricane --> p-value = 3.8e-05; Rip Current vs. Hurricane --> p-value = 4.8e-06), the p-value is less than alpha = 0.05, thus we reject the null hypothesis for these comparisons and say that median1 not= median2. In other words, the average damage rates for tornadoes and hurricanes, as well as those for rip currents and hurricanes, are different from each other, with regards to crop damage across event types in 2021. However, in the remaining comparison (Tornado vs. Rip Current --> p-value = 0.24), the p-value is greater than alpha = 0.05, thus we fail to reject the null hypothesis for this comparison and say that median1 = median2. In other words, the average damage rates for tornadoes and rip currents are equal to each other, with regards to crop damage across event types in 2021.
+
+
+To test for the correlation between crop damage (explanatory/independent variable) and property damage (response/dependent variable) (if any), I will run two Spearman rank correlation tests (one for each year).
+
+Note: For these tests, the damage rates within the Details files for 2020 and 2021 are considered the populations, and the damage rates representative of the subsets of all tornadoes, rip currents, and hurricanes that encompass these files (save the ones that had "NA" as either a property damage rate or crop damage rate --> these ones were omitted from our analyses) are considered the samples.
+
+Test 1 H0: Spearman rank correlation = 0, with regards to crop and property damages for 2020
+Test 1 Ha: Spearman rank correlation not= 0
+
+Test 2 H0: Spearman rank correlation = 0, with regards to crop and property damages for 2021
+Test 2 Ha: Spearman rank correlation not= 0
+```{r}
+cor.test(df.2020.events.clean$crop.damage, df.2020.events.clean$property.damage, method = "spearman") # Test 1
+
+cor.test(df.2021.events.clean$crop.damage, df.2021.events.clean$property.damage, method = "spearman") # Test 2
+```
+Test 1: Since the p-value (0.0008527) is less than alpha = 0.05, we reject the null hypothesis and say that the Spearman rank correlation is not equal to 0; specifically, the Spearman rank correlation is equal to 0.1715178, signifying a weak positive correlation between crop damage and property damage for 2020. 
+
+Test 2: Since the p-value (0.0001742) is less than alpha = 0.05, we reject the null hypothesis and say that the Spearman rank correlation is not equal to 0; specifically, the Spearman rank correlation is equal to 0.2419958, signifying a stronger positive correlation between crop damage and property damage for 2021 compared to that between crop damage and property damage for 2020 yet a weak positive correlation nonetheless.
+
+
+To determine whether the frequency of each disaster varies by state, I will run five Poisson regressions/G-tests.
+
+Test 1 H0: Event type and state are independent of each other, with regards to tornadoes in 2020.
+Test 1 Ha: Event type and state are dependent on each other.
+
+Test 2 H0: Event type and state are independent of each other, with regards to rip currents in 2020.
+Test 2 Ha: Event type and state are dependent on each other.
+
+Test 3 H0: Event type and state are independent of each other, with regards to hurricanes in 2020.
+Test 3 Ha: Event type and state are dependent on each other.
+
+Test 4 H0: Event type and state are independent of each other, with regards to tornadoes in 2021.
+Test 4 Ha: Event type and state are dependent on each other.
+
+Test 5 H0: Event type and state are independent of each other, with regards to rip currents in 2021.
+Test 5 Ha: Event type and state are dependent on each other.
+
+Note: A Poisson regression/G-test wasn't conducted regarding hurricanes in 2021 because only one event occurred, and this statistical test in particular requires 2 or more levels.
+```{r}
+df.2020.tornado.aggregate <- aggregate(event.type ~ state, FUN = length, data = df.2020.tornado)
+df.2020.ripcurrent.aggregate <- aggregate(event.type ~ state, FUN = length, data = df.2020.ripcurrent)
+df.2020.hurricane.aggregate <- aggregate(event.type ~ state, FUN = length, data = df.2020.hurricane)
+df.2021.tornado.aggregate <- aggregate(event.type ~ state, FUN = length, data = df.2021.tornado)
+df.2021.ripcurrent.aggregate <- aggregate(event.type ~ state, FUN = length, data = df.2021.ripcurrent)
+df.2021.hurricane.aggregate <- aggregate(event.type ~ state, FUN = length, data = df.2021.hurricane)
+
+mod1 <- glm(event.type ~ state, data = df.2020.tornado.aggregate, family = poisson) # Test 1
+summary(mod1)
+anova(mod1)
+
+mod2 <- glm(event.type ~ state, data = df.2020.ripcurrent.aggregate, family = poisson) # Test 2
+summary(mod2)
+anova(mod2)
+
+mod3 <- glm(event.type ~ state, data = df.2020.hurricane.aggregate, family = poisson) # Test 3
+summary(mod3)
+anova(mod3)
+
+mod4 <- glm(event.type ~ state, data = df.2021.tornado.aggregate, family = poisson) # Test 4
+summary(mod4)
+anova(mod4)
+
+mod5 <- glm(event.type ~ state, data = df.2021.ripcurrent.aggregate, family = poisson) # Test 5
+summary(mod5)
+anova(mod5)
+```
+Test 1: For Arizona, California, Connecticut, Kansas, Massachusetts, Mississippi, New Mexico, New York, North Dakota, Ohio, Pennsylvania, South Dakota, Texas, Washington, and Wyoming, since the p-value is less than alpha = 0.05, we reject the null hypothesis and say that event type and state are dependent on each other, with regards to tornadoes in 2020. In other words, the frequency of tornadoes does vary relative to these states, and these states are statistically significant predictors in the model. For Arkansas, Colorado, Florida, Georgia, Illinois, Indiana, Iowa, Kentucky, Louisiana, Maryland, Minnesota, Missouri, Nebraska, North Carolina, Oklahoma, South Carolina, Tennessee, Virginia, and Wisconsin, since the p-value is greater than alpha = 0.05, we fail to reject the null hypothesis and say that event type and state are independent of each other, with regards to tornadoes in 2020. In other words, the frequency of tornadoes does not vary relative to these states, and these states are not statistically significant predictors in the model. 
+
+Test 2: For all the states included in the model (Florida, Georgia, Illinois, Indiana, Louisiana, Michigan, New Jersey, North Carolina, Puerto Rico, South Carolina, Texas, and Wisconsin), since the p-value is greater than alpha = 0.05, we fail to reject the null hypothesis and say that event type and state are independent of each other, with regards to rip currents in 2020. In other words, the frequency of rip currents does not vary relative to these states, and these states are not statistically significant predictors in the model.
+
+Test 3: For Louisiana, since the p-value is less than alpha = 0.05, we reject the null hypothesis and say that event type and state are dependent on each other, with regards to hurricanes in 2020. In other words, the frequency of hurricanes does vary relative to this state, and this state is a statistically significant predictor in the model. For Mississippi and Texas, since the p-value is greater than alpha = 0.05, we fail to reject the null hypothesis and say that event type and state are independent of each other, with regards to hurricanes in 2020. In other words, the frequency of hurricanes does not vary relative to these states, and these states are not statistically significant predictors in the model.
+
+Test 4: For Arizona, Arkansas, California, Connecticut, Georgia, Indiana, Iowa, Kansas, Kentucky, Louisiana, Michigan, Minnesota, Missouri, Nebraska, New Jersey, New Mexico, New York, North Carolina, North Dakota, Ohio, Oklahoma, Pennsylvania, South Carolina, South Dakota, Utah, Virginia, and Wisconsin, since the p-value is less than alpha = 0.05, we reject the null hypothesis and say that event type and state are dependent on each other, with regards to tornadoes in 2021. In other words, the frequency of tornadoes does vary relative to these states, and these states are statistically significant predictors in the model. For Colorado, Florida, Illinois, Mississippi, Tennessee, and Texas, since the p-value is greater than alpha = 0.05, we fail to reject the null hypothesis and say that event type and state are independent of each other, with regards to tornadoes in 2021. In other words, the frequency of tornadoes does not vary relative to these states, and these states are not statistically significant predictors in the model. 
+
+Test 5: For Florida, since the p-value is less than alpha = 0.05, we reject the null hypothesis and say that event type and state are dependent on each other, with regards to rip currents in 2021. In other words, the frequency of rip currents does vary relative to this state, and this state is a  statistically significant predictor in the model. For Georgia, Maryland, New York, North Carolina, Puerto Rico, Rhode Island, Texas, Virgin Islands, and Wisconsin, since the p-value is greater than alpha = 0.05, we fail to reject the null hypothesis and say that event type and state are independent of each other, with regards to rip currents in 2021. In other words, the frequency of rip currents does not vary relative to these states, and these states are not statistically significant predictors in the model. 
+ 
