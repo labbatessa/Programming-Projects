@@ -40,9 +40,9 @@ Public_Statement_Analysis - folder that contains 10 things:
 
 ***This project allowed users to explore sentiment scores of 11 corporate apologies for data breaches and corresponding stock fluctuations as a result***
 
-Weather_Disaster_Prediction - folder that contains 3 things, in the order that they appear:
+Weather_Disaster_Prediction - folder that contains 3 things:
 1) DS3000FinalProjectCodeWalkthrough.mp4 - a .mp4 file representative of a walkthrough of the code for the project
 2) DS3000_final_poster.pdf - a .pdf representative of the final poster for the project
-3) weather_disasters.ipynb - a .ipynb file that includes data cleaning steps (i.e. merging and concatenating dataframes, removing duplicate rows from a dataframe, filtering a dataframe based on columns of interest, changing column data types, modifying column values, deleting rows with missing values) and the implementation of three machine learning algorithms: random forest regression, knn regression, and multiple linear regression (libraries used: seaborn, pandas, sklearn, numpy, matplotlib)
+3) weather_disasters.ipynb - a .ipynb file that includes data cleaning steps (i.e. merging and concatenating dataframes, removing duplicate rows from a dataframe, filtering a dataframe based on columns of interest, changing column data types, modifying column values, deleting rows with missing values) and the implementation of three machine learning algorithms (random forest regression, knn regression, and multiple linear regression) (libraries used: seaborn, pandas, sklearn, numpy, matplotlib)
 
 ***This project predicted storm property damage based on storm event properties using data from the NOAA National Centers for Environmental Information Storm Events Database during 2012-2022***
