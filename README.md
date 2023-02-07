@@ -4,7 +4,8 @@ This repository includes the folders/files representative of the programming pro
 Analysis_of_Tornadoes_Rip_Currents_and_Hurricanes_in_the_US_in_2020 - folder that contains three things: 
 1) Analysis_of_Tornadoes_Rip_Currents_and_Hurricanes_in_the_US_in_2020_Lat_Long_Viz.py - a .py file (Python file) that holds a visualization illustrating the latitudes and longitudes of tornadoes in the United States in the year 2020 (libraries used: pandas, numpy, matplotlib)
 2) Analysis_of_Tornadoes_Rip_Currents_and_Hurricanes_in_the_US_in_2020_Statistical_Tests.Rmd - a .Rmd file (R Markdown file) that includes data cleaning steps (i.e. creating subsets, omitting null values, performing log transformations) and a plethora of statistical tests (i.e. Shapiro-Wilk tests, Kruskal-Wallis tests, Mann-Whitney U tests, Spearman rank correlation tests, G-tests) conducted based on the questions posed for the project
-3) DATA Club Snowball Project - Luke Abbatessa & Ciara Malamug.pptx - a .pptx file that represents a slideshow presentation detailing the specifics of the project
+3) Analysis_of_Tornadoes_Rip_Currents_and_Hurricanes_in_the_US_in_2020_detail_graphing.py - a .py file that holds visualizations illustrating the number of storm events by state in the US, the frequency of storm events by month, and the property damage per event type (libraries used: csv, random, matplotlib, pandas)
+4) DATA Club Snowball Project - Luke Abbatessa & Ciara Malamug.pptx - a .pptx file that represents a slideshow presentation detailing the specifics of the project
 
 ***This project involved the collection, analysis, visualization, & interpretation of data on previous locations, meteorological patterns, & economic damage rates of tornadoes, rip currents, & hurricanes in the US in 2020 to aid preparation for these events in the future***
 
