@@ -1,7 +1,7 @@
 # Programming-Projects
 This repository includes the folders/files representative of the programming projects I have completed thus far
 
-Analysis_of_Tornadoes_Rip_Currents_and_Hurricanes_in_the_US_in_2020 - folder that contains three things: 
+Analysis_of_Tornadoes_Rip_Currents_and_Hurricanes_in_the_US_in_2020 - folder that contains four things: 
 1) Analysis_of_Tornadoes_Rip_Currents_and_Hurricanes_in_the_US_in_2020_Lat_Long_Viz.py - a .py file (Python file) that holds a visualization illustrating the latitudes and longitudes of tornadoes in the United States in the year 2020 (libraries used: pandas, numpy, matplotlib)
 2) Analysis_of_Tornadoes_Rip_Currents_and_Hurricanes_in_the_US_in_2020_Statistical_Tests.Rmd - a .Rmd file (R Markdown file) that includes data cleaning steps (i.e. creating subsets, omitting null values, performing log transformations) and a plethora of statistical tests (i.e. Shapiro-Wilk tests, Kruskal-Wallis tests, Mann-Whitney U tests, Spearman rank correlation tests, G-tests) conducted based on the questions posed for the project
 3) Analysis_of_Tornadoes_Rip_Currents_and_Hurricanes_in_the_US_in_2020_detail_graphing.py - a .py file that holds visualizations illustrating the number of storm events by state in the US, the frequency of storm events by month, and the property damage per event type (libraries used: csv, random, matplotlib, pandas)
