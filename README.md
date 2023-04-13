@@ -27,6 +27,16 @@ Ocean_acidification_in_west_central_Florida - folder that contains two things:
 
 ***This project observed predicted relationships between atmospheric CO2 and pH and between pH and alkalinity for five coastal springs in west-central Florida in an effort to analyze ocean acidification***
 
+Predicting_ECommerce_Shoppers_Purchases - folder that contains six things:
+1) DS4400 Final Project Paper.docx - a .docx file containing the final report for the project
+2) Final Poster.pptx - a .pptx file containing the final poster for the project
+3) dtree.py - a .py file containing helper functions for the decision tree algorithm models implemented for the project (libraries used: pandas, collections, math, mltools)
+4) mltools.py - a .py file containing helper functions for all things machine learning-related for the project (libraries used: numpy, matplotlib, sklearn, collections, math)
+5) online_shoppers_intention.csv - a .csv file containing the dataset used for the project
+6) shoppers-purchase-intention.ipynb - a .ipynb file (Jupyter Notebook) containing helper functions, data cleaning steps (i.e. reading in the data as a Pandas DataFrame, changing variable data types, dropping duplicate rows, casting strings and boolean column values to integers, etc.), data shuffling, Exploratory Data Analysis, a train-test split of the data, the implementation of 10-fold cross validation, the implementation of two types of feature selection (tree-based feature selection, feature selection as part of a pipeline method), the implementation of decision tree hyperparameter tuning using two methods (GridSearchCV, self-developed tuning), and the implementation of nine machine learning models (a self-developed perceptron model with all features, SciKit-Learn's perceptron model with all features, a self-developed decision tree model with all features, SciKit-Learn's decision tree model with all features, a self-developed perceptron model with selected features, SciKit-Learn's perceptron model with selected features, a self-developed decision tree model with selected features and optimal hyperparameters, SciKit-Learn's decision tree model with selected features and optimal hyperparameters, and Keras's neural networks for classification) (libraries used: pandas, numpy, seaborn, matplotlib, random, mltools, collections, dtree, sklearn, six, IPython, pydotplus, tensorflow, keras, operator)
+
+***This project implemented self-developed machine learning models against SciKit-Learn’s machine learning models for the perceptron, decision tree, and neural networks algorithms to classify shoppers as buying or not buying***
+
 Public_Statement_Analysis - folder that contains 10 things:
 1) data_files - a subfolder containing 11 corporate apologies for data breaches, both as .txt files and as .json files
 2) stock_data_files - a subfolder containing stock data for the companies involved in the apologies
