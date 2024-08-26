@@ -23,6 +23,15 @@ CDC_Diabetes_Prediction_Based_on_Health_Indicators - folder that contains four t
 
 ***This project depicted correlations between a variety of different features and the onset of diabetes, in an effort to help health care professionals better infer the leading causes of diabetes based on the competing factors*** 
 
+FaunaDB_Database_Evaluation - folder that contains five things:
+1) FaunaDBReadCSV.py - a .py file that initializes a connection to Fauna, reads a .csv file, and adds the data to the FaunaDB database (***libraries used: FaunaDB, CSV, Datetime, config (a .py file including a secret to pass as a parameter to the FaunaClient class to initialize the connection to Fauna)***)
+2) Presentation - HW6 - DS4300.pdf - a .pdf file that represents a presentation detailing the specifics of the project
+3) Report - HW6 - DS4300.pdf - a .pdf file containing the final report for the project
+4) Viz.py - a .py file containing code to visualize the number of people per age group and the top 10 most popular job titles, based on a .csv file containing information for 1,000 people (***libraries: FaunaDB, config, Matplotlib, Collections***)
+5) people-1000.csv - a .csv file containing the "User Id", "First Name", "Last Name", "Sex", "Email", "Phone", "Date of birth", and "Job Title" for 1,000 different people
+
+***This project described key principles, use-cases, and a basic coding tutorial that conveys the essential ideas behind FaunaDB, a distributed multi-model NoSQL database***
+
 Investigating_the_Relationship_Between_Spreads_of_NFL_Games_and_NFL_Game_Type - folder that contains two things:
 1) Final Project Presentation - DS2001 - Luke Abbatessa & John McCarthy - Northeastern University.pptx - a .pptx file that represents a slideshow presentation detailing the specifics of the project
 2) Investigating_the_Relationship_Between_Spreads_of_NFL_Games_and_NFL_Game_Type.ipynb - a .ipynb file (Jupyter Notebook) that includes data cleaning steps (i.e. removing null values, converting values to floats), implementation of a t-test, and visualizations (e.g. bar chart, histograms) (***libraries used: Statistics, Math, CSV, Matplotlib, Google***)
