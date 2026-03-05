@@ -1,0 +1,418 @@
+---
+title: "ds4200_project_collab_filt"
+author: "Jocelyn Ju, Luke Abbatessa"
+date: '2025-04-14'
+output: html_document
+---
+
+# DS4420 Project Collaborative Filtering
+
+## Imports
+```{r}
+# Necessary Imports
+library(lsa)
+library(ggplot2)
+
+# Metric calculation functions
+rmse <- function(act, pred){
+  sqrt(mean((act-pred)^2))
+}
+
+mae <- function(act, pred){
+  mean(abs(act-pred))
+}
+
+```
+
+## Initial data managing
+```{r}
+# Read in the data!
+setwd("/Users/macintoshair/classes/ds4420/project/DS4420-Final-Project-main")
+ratings <- read.table("u.data") [,-4]
+names(ratings) <- c("UserID", "MovieID", "Rating")
+
+# Convert data to UserID (index) and MovieID (column values)
+rating_df <- reshape(ratings,
+              idvar = "UserID",
+              timevar = "MovieID",
+              direction = "wide",
+              v.names = "Rating")
+
+rownames(rating_df) <- rating_df$UserID
+rating_df$UserID <- NULL
+
+head(rating_df)
+```
+
+### Bar plot of rating distribution
+```{r}
+# visualize the distribution of ratings
+to_plot <- as.data.frame(table(ratings$Rating))
+colnames(to_plot) <- c("Rating", "Frequency")
+print(to_plot)
+ggplot(to_plot, aes(x=Rating, y=Frequency, fill=Rating)) +
+  geom_bar(stat="identity") +
+  labs(title="Rating Counts | MovieLens100k", x="Rating", y="Frequency")
+```
+
+### Train/Test dataset
+```{r}
+# create a train/test dataset
+set.seed(42)
+
+# make a train/test copy of the rating set
+rating_df_tott <- rating_df
+
+# test set
+test_indices <- list()
+
+# hide some ratings
+for (user in rownames(rating_df_tott)){
+  rated <- which(!is.na(rating_df_tott[user,]))
+  
+  # if the user has rated 5 or more movies
+  if (length(rated) >= 5) {
+    # grab a sample of 5% of the values for testing (approx. 10 users)
+    test_sample <- sample(rated, size=ceiling(length(rated) * 0.001))
+    test_indices[[user]] <- test_sample
+    
+    # replace with "NA" to hide actual rating
+    rating_df_tott[user, test_sample] <- NA 
+  }
+}
+```
+
+
+## Collaborative filtering function definition with LSA cosine (see end of file for entirely manual implementation)
+```{r}
+# Collaborative Filtering Function using lsa's cosine similarity for efficiency
+# approved via Piazza Post @429 Response from Dr. Gerber
+
+collab_filter <- function(data, target_user, similarity_metric, k, print=TRUE) {
+  
+  copy <- data.frame(data)
+  
+  # check if target user has missing ratings
+  if (length(which(is.na(copy[target_user, ]))) == 0) {
+    return(paste(target_user, ' has no missing ratings.'))
+  }
+
+  # check if target user is in data
+  if (! target_user %in% rownames(copy)) {
+    print(rownames(copy))
+    stop(target_user, ' is not present in the dataset.')
+  }
+  
+  # center data (row - mean(row)) 
+  centered <- copy - rowMeans(copy, na.rm=TRUE)
+  
+  # impute NaN with 0
+  centered[is.na(centered)] <- 0
+  
+  # list users that aren't user_id
+  users <- rownames(centered)[! rownames(centered) %in% target_user]
+  
+  # similarity score calculation
+  sim_scores <- c()
+
+  for (user in rownames(centered)) {
+    
+    if (user == target_user) {
+      sim_scores <- append(sim_scores, NA)
+    }
+      
+    # if L2, negative
+    else if (similarity_metric == 'L2') {
+      sim_scores <- append(sim_scores, -1 * norm(centered[user,] - centered[target_user,], "2"))
+      
+    } else {
+      # else, Cosine 
+      user_vec <- as.numeric(centered[user,])
+      targ_vec <- as.numeric(centered[target_user,])
+    
+      sim_scores <- append(sim_scores, cosine(user_vec, targ_vec))
+    }
+  }
+  
+  # add similarity scores to the dataframe 
+  copy$sim_scores <- sim_scores
+  
+  # for min/max, remove the NANs
+  nona <- sim_scores[! is.na(sim_scores)]
+  copy$sim_scores <- (copy$sim_scores - min(nona)) / (max(nona) - min(nona)) ##CENTERED???
+
+  # get k nearest neighbors
+  nearest_indices <- order(copy$sim_scores, decreasing=TRUE)[1:k] 
+  nearest <- rownames(copy[nearest_indices,])
+
+  # get list of movies to predict (NaNs in original data, drop sim_scores)
+  pred <- which(is.na(copy[target_user,]))
+  movies <- colnames(copy)[head(pred, -1)]
+  pred_scores <- c()
+
+    # weight ratings of most similar users to calculate the scores for movies
+  for (movie in movies) {
+    num <- 0
+    denom <- 0
+
+    # iterate through the k nearest students
+    for (near in nearest) {
+      rating <- as.numeric(copy[near, movie])
+
+      sim_sc <- as.numeric(copy[near, "sim_scores"])
+
+      if (! is.na(rating)) {
+        # use the weighted ratings sum if exist
+        num <- (sim_sc * rating) + num # sum weighted ratings
+        denom <- sim_sc + denom # sum weights
+
+      } else{
+        # otherwise use the mean of the ratings for that user (but not the sim_score column)
+        drop_sim <- as.numeric(copy[near, -ncol(copy)])
+
+        num <- (sim_sc * mean(drop_sim, na.rm=TRUE)) + num
+        denom <- sim_sc + denom
+      }
+      
+    }
+    
+    # predicted score
+    pred_score <- num / denom
+  
+    if (print) {
+      
+      # print results if indicated
+      print(paste(movie, ': ' , pred_score))
+    }
+    
+    # append the scores to a list for easy access
+    pred_scores <- append(pred_scores, pred_score)
+  }
+  
+  # return the scores
+  return(pred_scores)
+}
+```
+
+## Train/Test Code for Metrics
+```{r}
+# using the rating_df_tott as training & test_indices as test
+
+# create a df to store results 
+comparison_results <- data.frame(Similarity=character(), k=integer(), RMSE=double(), MAE=double(), Exact_Accuracy=double(), stringsAsFactors = FALSE)
+
+# df of results including the predicted/actual values
+all_results <- data.frame(Similarity=character(), k=integer(), pred=double(), actual=integer())
+
+# initialize similarity & k
+similarity_totest <- c("L2", "cosine")
+k_vals_totest <- c(3, 5, 10, 20)
+  
+# iterate through options
+for (similarity in similarity_totest){
+  for (k in k_vals_totest){
+    # initialize lists for each similarity, k pairing
+    actuals <- c()
+    predicteds <- c()
+    
+    for (user in names(test_indices[1:limit])) {
+      hidden <- test_indices[[user]] 
+      
+      # predict hiddens
+      preds <- collab_filter(rating_df_tott, user, "cosine", k, FALSE)
+      pred_movienames <- colnames(rating_df)[hidden]
+      
+      # save predictions and actuals
+      actual <- as.numeric(rating_df[user, pred_movienames])
+      pred <- preds[1:length(pred_movienames)]
+      
+      # add results to the results df
+      user_results <- data.frame(
+        Similarity = rep(similarity, length(actual)),
+        k = rep(k, length(actual)),
+        pred = pred,
+        actual = actual
+      )
+      
+      # add to the dataframe
+      all_results <- rbind(all_results, user_results)
+      
+      # append to lists
+      actuals <- c(actuals, actual)
+      predicteds <- c(predicteds, pred)
+    }
+      
+    # metric calculation and printing
+    rmse_ksim <- rmse(actuals, predicteds)
+    mae_ksim <- mae(actuals, predicteds)
+    acc <- sum(actuals == round(predicteds), na.rm=TRUE) / length(actuals)
+      
+    # plot actuals vs. predicteds
+    plot(actuals, predicteds, 
+          main="Actual vs. Predicted Ratings CF", 
+          sub=sprintf("Similarity: %s | k = %d", similarity, k),
+          xlab="Actual Ratings",
+          ylab="Predicted Ratings")
+      
+    cat(sprintf("Similarity: %-6s | k = %2d | RMSE = %.4f | MAE = %.4f\n | Accuracy: %.4f", similarity, k, rmse_ksim, mae_ksim, acc))
+      
+    # add to overall df
+    comparison_results <-rbind(comparison_results, data.frame(Similarity=similarity, k=k, RMSE=rmse_ksim, MAE=mae_ksim, Rounded_Accuracy=acc))
+  }
+}
+```
+
+### Save Results to CSV
+```{r}
+# save results
+write.csv(all_results, "all_results.csv", row.names=FALSE)
+```
+
+
+## Running Code Iteratively & Storing Results
+```{r}
+# storing results
+limit <- 10 # number of users to perform CF for, length(rownames(rating_df)) for all
+
+# initialize storing df
+all_preds <- data.frame(UserID = integer(0), MovieID = integer(0), PredictedScore = numeric(0))
+
+# get all users
+all_users <- rownames(rating_df)[1:limit]
+print(all_users)
+
+# run the function
+for (user in all_users){
+  pred_scores <- collab_filter(rating_df, as.character(user), "cosine", 3, FALSE)
+  movie_ids <- which(is.na(rating_df[user,]))
+  
+  # results
+  result_tosave <- data.frame(
+    UserID = rep(user, length(pred_scores)),
+    MovieID = colnames(rating_df)[movie_ids],
+    PredictedScore = pred_scores
+  )
+  
+  # add to df
+  all_preds <- rbind(all_preds, result_tosave)
+  
+  cat(paste("User: ", user, " results added.\n"))
+}
+
+```
+
+### Save to CSV
+```{r}
+# Save to csv file
+write.csv(all_preds, "10_CF_results.csv", row.names=FALSE)
+```
+
+## Collaborative Filtering Function- Entirely Manually
+```{r}
+# collab_filter from above, but using manually-implemented cosine similarity instead of LSA
+collab_filter <- function(data, target_user, similarity_metric, k, print=TRUE) {
+  
+  copy <- data.frame(data)
+  
+  # check if target user has missing ratings
+  if (length(which(is.na(copy[target_user, ]))) == 0) {
+    return(paste(target_user, ' has no missing ratings.'))
+  }
+
+  # check if target user is in data
+  if (! target_user %in% rownames(copy)) {
+    print(rownames(copy))
+    stop(target_user, ' is not present in the dataset.')
+  }
+  
+  # center data (row - mean(row)) 
+  centered <- copy - rowMeans(copy, na.rm=TRUE)
+  
+  # impute NaN with 0
+  centered[is.na(centered)] <- 0
+  
+  # list users that aren't user_id
+  users <- rownames(centered)[! rownames(centered) %in% target_user]
+  
+  # similarity score calculation
+  sim_scores <- c()
+
+  for (user in rownames(centered)) {
+    
+    if (user == target_user) {
+      sim_scores <- append(sim_scores, NA)
+    }
+      
+    # if L2, negative
+    else if (similarity_metric == 'L2') {
+      sim_scores <- append(sim_scores, -1 * norm(centered[user,] - centered[target_user,], "2"))
+      
+    } else {
+      # else, Cosine 
+      user_vec <- as.numeric(centered[user,])
+      targ_vec <- as.numeric(centered[target_user,])
+    
+      sim_scores <- append(sim_scores, cosine(user_vec, targ_vec))
+    }
+  }
+  
+  # add similarity scores to the dataframe 
+  copy$sim_scores <- sim_scores
+  
+  # for min/max, remove the NANs
+  nona <- sim_scores[! is.na(sim_scores)]
+  copy$sim_scores <- (copy$sim_scores - min(nona)) / (max(nona) - min(nona)) ##CENTERED???
+
+  # get k nearest neighbors
+  nearest_indices <- order(copy$sim_scores, decreasing=TRUE)[1:k] 
+  nearest <- rownames(copy[nearest_indices,])
+
+  # get list of movies to predict (NaNs in original data, drop sim_scores)
+  pred <- which(is.na(copy[target_user,]))
+  movies <- colnames(copy)[head(pred, -1)]
+  pred_scores <- c()
+
+    # weight ratings of most similar users to calculate the scores for movies
+  for (movie in movies) {
+    num <- 0
+    denom <- 0
+
+    # iterate through the k nearest students
+    for (near in nearest) {
+      rating <- as.numeric(copy[near, movie])
+
+      sim_sc <- as.numeric(copy[near, "sim_scores"])
+      #sim_sc <- as.numeric(sim_scores[near])
+      
+      if (! is.na(rating)) {
+        # use the weighted ratings sum if exist
+        num <- (sim_sc * rating) + num # sum weighted ratings
+        denom <- sim_sc + denom # sum weights
+
+      } else{
+        # otherwise use the mean of the ratings for that user (but not the sim_score column)
+        drop_sim <- as.numeric(copy[near, -ncol(copy)])
+
+        num <- (sim_sc * mean(drop_sim, na.rm=TRUE)) + num
+        denom <- sim_sc + denom
+      }
+      
+    }
+    
+    # predicted score
+    pred_score <- num / denom
+  
+    if (print) {
+      # print results in human-readable format
+      print(paste(movie, ': ' , pred_score))
+    }
+    
+    # append the scores to a list for easy access
+    pred_scores <- append(pred_scores, pred_score)
+  }
+  
+  # return the scores
+  return(pred_scores)
+  
+}
+```
